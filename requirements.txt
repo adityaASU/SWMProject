@@ -23,6 +23,10 @@ pydantic-settings>=2.3.0
 python-dotenv>=1.0.1
 pyyaml>=6.0.1
 
+# Dataset download
+huggingface_hub>=1.11.0
+datasets>=2.20.0
+
 # Visualization
 matplotlib>=3.9.0
 graphviz>=0.20.3
