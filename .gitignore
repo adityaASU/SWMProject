@@ -1,0 +1,44 @@
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Data (large, downloaded separately)
+data/spider/
+data/cosql/
+
+# Results
+results/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Graphviz output
+*.gv
+*.dot
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage
+
+# Streamlit
+.streamlit/secrets.toml
