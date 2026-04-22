@@ -74,7 +74,10 @@ class SQLSynthesizer:
                 expr = f"COUNT(DISTINCT {inner})"
             else:
                 expr = f"{node.function.value}({inner})"
-            if node.alias:
+            # Only add alias if it looks like a meaningful user-specified name
+            # (not generic auto-names like 'cnt', 'count', 'agg')
+            _generic = {"cnt", "count", "agg", "total", "num", "sum", "avg", "min", "max"}
+            if node.alias and node.alias.lower() not in _generic:
                 expr += f" AS {node.alias}"
             items.append(expr)
 

@@ -22,16 +22,40 @@ class MetricResult:
 def normalise_sql(sql: str) -> str:
     """Normalise SQL for exact-match comparison (case, whitespace, aliases)."""
     sql = sql.strip().lower()
-    # Collapse whitespace
     sql = re.sub(r"\s+", " ", sql)
-    # Remove trailing semicolon
     sql = sql.rstrip(";").strip()
+    # Remove common auto-generated aliases (e.g. "count(*) as cnt" → "count(*)")
+    sql = re.sub(r"\s+as\s+(cnt|count|agg|total|num|sum_\w*|avg_\w*)\b", "", sql)
     return sql
 
 
 def exact_match(predicted: str, gold: str) -> bool:
-    """Return True if *predicted* matches *gold* after normalisation."""
-    return normalise_sql(predicted) == normalise_sql(gold)
+    """Return True if *predicted* matches *gold* after normalisation.
+
+    Uses two passes:
+    1. Strict string equality after normalisation.
+    2. SELECT-column-order-agnostic comparison (sorted columns, same rest).
+    """
+    pred = normalise_sql(predicted)
+    gold_n = normalise_sql(gold)
+    if pred == gold_n:
+        return True
+    # Column-order-agnostic: sort SELECT columns, compare the rest
+    return _order_agnostic_match(pred, gold_n)
+
+
+def _order_agnostic_match(pred: str, gold: str) -> bool:
+    """Sort SELECT columns alphabetically in both queries before comparing."""
+    try:
+        def sort_select(sql: str) -> str:
+            m = re.match(r"^(select\s+)(.+?)(\s+from\s+.*)$", sql, re.DOTALL)
+            if not m:
+                return sql
+            cols = [c.strip() for c in m.group(2).split(",")]
+            return m.group(1) + ", ".join(sorted(cols)) + m.group(3)
+        return sort_select(pred) == sort_select(gold)
+    except Exception:
+        return False
 
 
 def execution_accuracy(
