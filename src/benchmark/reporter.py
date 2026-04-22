@@ -11,7 +11,8 @@ from src.benchmark.runner import BenchmarkReport
 def save_report(report: BenchmarkReport, results_dir: Path) -> tuple[Path, Path]:
     """Save *report* as both JSON and Markdown. Returns (json_path, md_path)."""
     results_dir = Path(results_dir)
-    run_dir = results_dir / f"{report.run_id}_{report.model_name.replace('/', '_')}"
+    safe_name = report.model_name.replace("/", "_").replace(":", "-")
+    run_dir = results_dir / f"{report.run_id}_{safe_name}"
     run_dir.mkdir(parents=True, exist_ok=True)
 
     json_path = run_dir / "report.json"
