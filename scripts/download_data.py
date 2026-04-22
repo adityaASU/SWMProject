@@ -120,6 +120,24 @@ def _parquet_to_json(parquet_path: Path, out_path: Path, split: str) -> None:
     print(f"  {split}: {len(records)} examples -> {out_path.name}")
 
 
+def _download_tables_json(spider_dir: Path) -> None:
+    """Download Spider tables.json (schema for all 166 databases) from GitHub."""
+    out = spider_dir / "tables.json"
+    if out.exists():
+        return
+    url = "https://raw.githubusercontent.com/taoyds/spider/master/tables.json"
+    print(f"  Downloading tables.json (schema definitions) from GitHub...")
+    try:
+        import urllib.request
+        urllib.request.urlretrieve(url, out)
+        with open(out) as f:
+            n = len(json.load(f))
+        print(f"  tables.json: {n} database schemas saved.")
+    except Exception as exc:
+        print(f"  tables.json download failed: {exc}")
+        print("  Schema-based queries will not work without tables.json.")
+
+
 def _print_spider_db_status(spider_dir: Path) -> None:
     db_dir = spider_dir / "database"
     if db_dir.exists() and any(db_dir.iterdir()):
