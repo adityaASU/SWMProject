@@ -5,15 +5,44 @@ Welcome to the Text2SQL LRG project. This guide explains how to set up your deve
 ## Development Setup
 
 ```bash
-git clone <repo-url>
-cd text2sql-lrg
+git clone https://github.com/adityaASU/SWMProject.git
+cd SWMProject/text2sql-lrg
+
 python -m venv .venv
-.venv\Scripts\activate        # Windows
-source .venv/bin/activate     # macOS / Linux
+
+# Windows (PowerShell) — use Activate.ps1, NOT source
+.venv\Scripts\Activate.ps1
+
+# macOS / Linux
+source .venv/bin/activate
+
 pip install -r requirements.txt
-cp .env.example .env
-# Fill in GEMINI_API_KEY or set LLM_BACKEND=ollama
+cp .env.example .env   # then edit .env to set your backend
 ```
+
+See the main [README](../README.md) for full backend setup instructions (Ollama or Gemini).
+
+### LLM Backend Notes for Contributors
+
+**Ollama (recommended for local dev):**
+- Install from [ollama.com](https://ollama.com/) — it auto-starts on Windows
+- Use `llama3.2:3b` (or `mistral:7b`, `qwen2.5:7b`) — these models follow JSON instructions correctly
+- **Do not use `sqlcoder:7b`** for the LRG pipeline — it outputs raw SQL and ignores JSON format requests
+- On Windows, Ollama may not be in PATH after a fresh install — add it: `$env:PATH += ";$env:LOCALAPPDATA\Programs\Ollama"`
+- If you see `bind: Only one usage of each socket address`, Ollama is already running — that's fine
+
+**Gemini:**
+- Free tier key from [aistudio.google.com/apikey](https://aistudio.google.com/apikey)
+- Use `gemini-2.0-flash-lite` for highest free-tier rate limits
+- The LLM client has automatic retry with backoff for 429 rate limit errors
+
+### Debugging LLM Issues
+
+If your queries produce an empty LRG (`0 nodes, 0 edges`), run the debug script:
+```bash
+python scripts/debug_llm.py
+```
+This shows the exact schema loaded, the prompt sent, and the raw LLM response. The most common cause is the model returning a different JSON structure — fix it by updating the prompt in `src/lrg/builder.py`.
 
 ## Branch Strategy
 

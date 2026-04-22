@@ -131,23 +131,55 @@ _EXTRACTION_SCHEMA = {
 }
 
 _BUILDER_PROMPT_TEMPLATE = """\
-You are a semantic parser that converts natural language questions into structured \
-logical reasoning components for SQL generation.
-
-Given the database schema and question, extract the logical components needed to answer \
-the question. Identify all tables, columns, filters, aggregations, and joins required.
+You are a semantic parser. Extract logical components from the question and return ONLY a JSON object.
 
 {schema_section}
 
 {history_section}
 Question: {question}
 
-Important:
-- Only reference tables and columns that exist in the schema above.
-- If the same table is used twice (self-join), list it twice with different aliases and roles.
-- For subqueries, describe what the inner query computes.
-- For joins, list the tables that need to be joined in order.
+Rules:
+- Only use tables and columns that exist in the schema above.
 - operator must be one of: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN, NOT IN, IS NULL, IS NOT NULL, BETWEEN
+- Return ONLY the JSON object below, with no explanation or extra text.
+
+You MUST respond with a JSON object using EXACTLY these keys:
+{{
+  "main_entities": [
+    {{"table": "<table_name>", "alias": "", "role": "", "is_main": true}}
+  ],
+  "select_attributes": [
+    {{"table": "<table_name>", "column": "<column_name>", "alias": ""}}
+  ],
+  "aggregations": [
+    {{"function": "COUNT", "table": "<table_name>", "column": "*", "output_alias": "cnt", "table_alias": ""}}
+  ],
+  "group_by": [
+    {{"table": "<table_name>", "column": "<column_name>"}}
+  ],
+  "filters": [
+    {{"table": "<table_name>", "column": "<column_name>", "operator": "=", "value": "<val>", "is_having": false}}
+  ],
+  "join_hints": [],
+  "subqueries": [],
+  "is_self_join": false,
+  "has_subquery": false
+}}
+
+Example — "How many students are in each department?":
+{{
+  "main_entities": [{{"table": "student", "alias": "", "role": "", "is_main": true}}],
+  "select_attributes": [{{"table": "student", "column": "dept_name", "alias": ""}}],
+  "aggregations": [{{"function": "COUNT", "table": "student", "column": "*", "output_alias": "cnt", "table_alias": ""}}],
+  "group_by": [{{"table": "student", "column": "dept_name"}}],
+  "filters": [],
+  "join_hints": [],
+  "subqueries": [],
+  "is_self_join": false,
+  "has_subquery": false
+}}
+
+Now answer for the question above using the schema provided. Return ONLY the JSON object.
 """
 
 
@@ -193,9 +225,19 @@ class LRGBuilder:
         prompt = _build_extraction_prompt(question, schema, conversation_history)
         try:
             extracted = self._llm.generate_structured(prompt, _EXTRACTION_SCHEMA)
+            logger.debug("LLM extracted: %s", extracted)
         except Exception as exc:
             logger.error("LLM structured extraction failed: %s", exc)
+            print(f"\n  [LRG Builder] ERROR: LLM structured extraction failed: {exc}")
+            print("  This usually means the model does not support JSON output.")
+            print("  For Ollama, use a general-purpose model (llama3.2, mistral, qwen2.5).")
+            print("  For Gemini, check your API key and model name in .env\n")
             extracted = {}
+
+        if not extracted.get("main_entities"):
+            print(f"  [LRG Builder] WARNING: No entities extracted from LLM response.")
+            print(f"  LLM backend: {self._llm.name}")
+            print("  Check that your model is running and supports instruction-following.\n")
 
         lrg = self._assemble(extracted, schema, schema_graph)
         errors = lrg.validate(schema_graph)
