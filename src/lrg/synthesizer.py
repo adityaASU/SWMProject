@@ -60,15 +60,20 @@ class SQLSynthesizer:
 
     def _select(self, lrg: LRGGraph) -> str:
         items: list[str] = []
+        multi_table = self._is_multi_table(lrg)
 
         # Aggregation expressions take priority
         for node in lrg.nodes_of_type(NodeType.AGGREGATION):
             assert isinstance(node, AggregationNode)
-            col_ref = _col_ref(node.table_name, node.column_name, node.table_alias)
-            if node.function == AggregationFunction.COUNT_DISTINCT:
-                expr = f"COUNT(DISTINCT {col_ref})"
+            # COUNT(*) — never qualify the wildcard with a table prefix
+            if node.column_name == "*":
+                inner = "*"
             else:
-                expr = f"{node.function.value}({col_ref})"
+                inner = _col_ref(node.table_name, node.column_name, node.table_alias, multi_table)
+            if node.function == AggregationFunction.COUNT_DISTINCT:
+                expr = f"COUNT(DISTINCT {inner})"
+            else:
+                expr = f"{node.function.value}({inner})"
             if node.alias:
                 expr += f" AS {node.alias}"
             items.append(expr)
@@ -77,10 +82,17 @@ class SQLSynthesizer:
         for node in lrg.nodes_of_type(NodeType.ATTRIBUTE):
             assert isinstance(node, AttributeNode)
             if node.in_select:
-                ref = _col_ref(node.table_name, node.column_name, node.alias)
+                ref = _col_ref(node.table_name, node.column_name, None, multi_table)
                 items.append(ref)
 
         return ", ".join(items) if items else "*"
+
+    def _is_multi_table(self, lrg: LRGGraph) -> bool:
+        """Return True if the query involves more than one table (needs qualification)."""
+        tables = set()
+        for n in lrg.nodes_of_type(NodeType.ENTITY) + lrg.nodes_of_type(NodeType.ALIAS):
+            tables.add(getattr(n, "table_name", ""))
+        return len(tables) > 1
 
     # ── FROM ──────────────────────────────────────────────────────────────────
 
@@ -137,12 +149,12 @@ class SQLSynthesizer:
             n for n in lrg.nodes_of_type(NodeType.FILTER)
             if isinstance(n, FilterNode) and not n.is_having
         ]
-        # Also include subquery-derived filters
         conditions = [self._filter_expr(f, lrg) for f in filters]
         return " AND ".join(c for c in conditions if c)
 
     def _filter_expr(self, node: FilterNode, lrg: LRGGraph) -> str:
-        col = _col_ref(node.table_name, node.column_name, node.alias)
+        multi_table = self._is_multi_table(lrg)
+        col = _col_ref(node.table_name, node.column_name, node.alias, multi_table)
         op = node.operator
 
         if op == FilterOperator.IS_NULL:
@@ -168,8 +180,9 @@ class SQLSynthesizer:
             return ""
         node = gb_nodes[0]
         assert isinstance(node, GroupingNode)
+        multi_table = self._is_multi_table(lrg)
         return ", ".join(
-            _col_ref(col["table"], col["column"]) for col in node.columns
+            _col_ref(col["table"], col["column"], None, multi_table) for col in node.columns
         )
 
     # ── HAVING ────────────────────────────────────────────────────────────────
@@ -183,12 +196,21 @@ class SQLSynthesizer:
         return " AND ".join(c for c in conditions if c)
 
 
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
-def _col_ref(table: str, column: str, alias: Optional[str] = None) -> str:
-    prefix = alias or table
+def _col_ref(table: str, column: str, alias: Optional[str] = None, qualify: bool = True) -> str:
+    """Build a column reference.
+
+    - If column is '*', always returns bare '*' (never 'table.*').
+    - If qualify is False (single-table query), returns bare column name.
+    - Otherwise uses alias if given, else table name as prefix.
+    """
     if column == "*":
-        return f"{prefix}.*" if prefix else "*"
+        return "*"
+    if not qualify:
+        return column
+    prefix = alias or table
     return f"{prefix}.{column}" if prefix else column
 
 
