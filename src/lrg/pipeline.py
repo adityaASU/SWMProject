@@ -7,6 +7,7 @@ from src.baseline.base import BaseText2SQL, PredictionResult
 from src.llm.base import BaseLLM
 from src.lrg.builder import LRGBuilder
 from src.lrg.graph import LRGGraph
+from src.lrg.repair import repair, RepairResult
 from src.lrg.synthesizer import SQLSynthesizer
 from src.schema.graph import SchemaGraph
 from src.schema.parser import SchemaInfo
@@ -40,6 +41,15 @@ class LRGText2SQL(BaseText2SQL):
         lrg, validation_errors = self._builder.build(
             question, schema, schema_graph, conversation_history
         )
+
+        # ── Professor feedback: self-repair on validation errors ──────────────
+        repair_result = None
+        if validation_errors:
+            repair_result = repair(lrg, schema_graph, validation_errors)
+            if repair_result.success and repair_result.repaired_lrg is not None:
+                lrg = repair_result.repaired_lrg
+                validation_errors = lrg.validate(schema_graph)
+
         sql = self._synthesizer.synthesize(lrg)
 
         return PredictionResult(
@@ -53,6 +63,8 @@ class LRGText2SQL(BaseText2SQL):
                 "lrg": lrg.to_dict(),
                 "lrg_summary": lrg.summary(),
                 "validation_errors": validation_errors,
+                "repair_applied": repair_result.repairs_applied if repair_result else [],
+                "repair_success": repair_result.success if repair_result else True,
             },
         )
 

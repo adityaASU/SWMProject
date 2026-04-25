@@ -379,24 +379,110 @@ class LRGBuilder:
                     label="groups",
                 ))
 
-        # 7. Subquery nodes
+        # 7. Subquery nodes — professor feedback: each SELECT = own scoped subgraph
+        outer_tables = {k[0] for k in entity_map.keys()}
         for sq in raw.get("subqueries", []):
-            sq_node = SubgraphNode(
-                role=sq.get("role", ""),
-                label=f"Subquery: {sq.get('role', '')}",
-            )
+            sq_node = self._build_subquery_node(sq, schema, schema_graph, outer_tables)
             sq_id = lrg.add_node(sq_node)
-            # Connect to first entity as placeholder — builder caller can recurse
+
+            # SUBQUERY_OF edge: outer entity → subgraph node
             if entity_map:
                 first_entity_id = next(iter(entity_map.values()))
                 lrg.add_edge(LRGEdge(
                     source_id=first_entity_id,
                     target_id=sq_id,
                     edge_type=EdgeType.SUBQUERY_OF,
-                    label=sq.get("role", "subquery"),
+                    label=sq_node.operator,
                 ))
 
+            # CONTEXT_PASS edges: outer entities that the inner graph can see
+            for (tbl, _), eid in entity_map.items():
+                lrg.add_edge(LRGEdge(
+                    source_id=eid,
+                    target_id=sq_id,
+                    edge_type=EdgeType.CONTEXT_PASS,
+                    label=f"outer:{tbl}",
+                ))
+
+            # BINDING edges: explicit correlated bindings (outer col = inner col)
+            for binding in sq_node.correlated_bindings:
+                outer_eid = self._find_entity(entity_map, binding.get("outer_table", ""))
+                if outer_eid:
+                    lrg.add_edge(LRGEdge(
+                        source_id=outer_eid,
+                        target_id=sq_id,
+                        edge_type=EdgeType.BINDING,
+                        label=f"{binding['outer_table']}.{binding['outer_col']}"
+                              f"={binding['inner_table']}.{binding['inner_col']}",
+                    ))
+
         return lrg
+
+    def _build_subquery_node(
+        self,
+        sq: dict,
+        schema: SchemaInfo,
+        schema_graph: SchemaGraph,
+        outer_tables: set,
+    ) -> SubgraphNode:
+        """Build a fully populated SubgraphNode with its own inner LRG.
+
+        Professor feedback:
+          - Each SELECT = its own distinct scoped subgraph
+          - Classify as unnested / nested_uncorrelated / nested_correlated
+          - Correlated bindings mapped explicitly as BINDING edges
+        """
+        role = sq.get("role", "")
+        operator = sq.get("operator", "IN").upper()
+        inner_desc = sq.get("description", "")
+        inner_entities = sq.get("inner_entities", [])
+        inner_filters = sq.get("inner_filters", [])
+        inner_aggs = sq.get("inner_aggregations", [])
+        bindings = sq.get("correlated_bindings", [])
+
+        # ── Build the inner LRG ──────────────────────────────────────────────
+        inner_raw = {
+            "main_entities": [
+                {"table": t, "alias": "", "role": "", "is_main": i == 0}
+                for i, t in enumerate(inner_entities)
+            ],
+            "select_attributes": sq.get("inner_select", []),
+            "filters": inner_filters,
+            "aggregations": inner_aggs,
+            "group_by": sq.get("inner_group_by", []),
+            "subqueries": [],
+            "join_hints": [],
+            "is_self_join": False,
+            "has_subquery": False,
+        }
+        inner_lrg_obj = self._assemble(inner_raw, schema, schema_graph)
+        inner_lrg_dict = inner_lrg_obj.to_dict()
+
+        # ── Classify subquery type ───────────────────────────────────────────
+        if not inner_entities:
+            subquery_type = "unnested"
+        elif bindings:
+            subquery_type = "nested_correlated"
+        else:
+            inner_tables = {e if isinstance(e, str) else e.get("table", "") for e in inner_entities}
+            if inner_tables & outer_tables:
+                # inner references outer table → correlated
+                subquery_type = "nested_correlated"
+            else:
+                subquery_type = "nested_uncorrelated"
+
+        label_parts = [f"[{subquery_type}]", role]
+        if operator:
+            label_parts.append(operator)
+
+        return SubgraphNode(
+            role=role,
+            label=" ".join(p for p in label_parts if p),
+            subquery_type=subquery_type,
+            inner_lrg=inner_lrg_dict,
+            correlated_bindings=bindings,
+            operator=operator,
+        )
 
     def _add_join_edges(
         self,

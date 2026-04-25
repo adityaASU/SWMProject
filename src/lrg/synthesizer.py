@@ -22,8 +22,6 @@ from src.lrg.nodes import (
     SubgraphNode,
 )
 
-logger = logging.getLogger(__name__)
-
 
 class SQLSynthesizer:
     """Converts an LRGGraph into an executable SQL string deterministically."""
@@ -54,7 +52,76 @@ class SQLSynthesizer:
         if having_clause:
             parts.append(f"HAVING {having_clause}")
 
+        # ── Professor feedback: each SubgraphNode = its own SELECT block ──
+        for sq_node in lrg.nodes_of_type(NodeType.SUBGRAPH):
+            assert isinstance(sq_node, SubgraphNode)
+            sq_sql = self._subquery_sql(sq_node, lrg)
+            if sq_sql:
+                # Attach to WHERE if no WHERE yet, else append with AND
+                subq_expr = f"{sq_node.operator} (\n  {sq_sql}\n)"
+                if "WHERE" not in "\n".join(parts):
+                    parts.append(f"WHERE {subq_expr}")
+                else:
+                    parts = [
+                        p + f"\n  AND {subq_expr}" if p.startswith("WHERE") else p
+                        for p in parts
+                    ]
+
         return "\n".join(parts)
+
+    def _subquery_sql(self, sq_node: SubgraphNode, outer_lrg: LRGGraph) -> str:
+        """Synthesize SQL for an inner scoped subgraph.
+
+        Professor feedback:
+          - Scoped subgraph has its own entity/filter/agg nodes
+          - Correlated bindings produce 'WHERE inner.col = outer.col'
+          - subquery_type determines whether outer context is injected
+        """
+        if not sq_node.inner_lrg:
+            return ""
+
+        try:
+            inner_lrg = LRGGraph.from_dict(sq_node.inner_lrg)
+        except Exception as exc:
+            logger.warning("Failed to reconstruct inner LRG: %s", exc)
+            return ""
+
+        # Build inner SELECT
+        inner_select = self._select(inner_lrg) or "*"
+        inner_from = self._from(inner_lrg)
+        if not inner_from or inner_from == "unknown_table":
+            return ""
+
+        inner_joins = self._joins(inner_lrg)
+        inner_where = self._where(inner_lrg)
+        inner_group = self._group_by(inner_lrg)
+        inner_having = self._having(inner_lrg)
+
+        # Correlated bindings → extra WHERE conditions (nested_correlated only)
+        binding_conditions: list[str] = []
+        if sq_node.subquery_type == "nested_correlated":
+            for b in sq_node.correlated_bindings:
+                outer_t = b.get("outer_table", "")
+                outer_c = b.get("outer_col", "")
+                inner_t = b.get("inner_table", "")
+                inner_c = b.get("inner_col", "")
+                if outer_t and outer_c and inner_t and inner_c:
+                    binding_conditions.append(f"{inner_t}.{inner_c} = {outer_t}.{outer_c}")
+
+        all_where_parts = [p for p in [inner_where] + binding_conditions if p]
+        combined_where = " AND ".join(all_where_parts)
+
+        parts = [f"SELECT {inner_select}", f"FROM {inner_from}"]
+        if inner_joins:
+            parts.append(inner_joins)
+        if combined_where:
+            parts.append(f"WHERE {combined_where}")
+        if inner_group:
+            parts.append(f"GROUP BY {inner_group}")
+        if inner_having:
+            parts.append(f"HAVING {inner_having}")
+
+        return "\n  ".join(parts)
 
     # ── SELECT ────────────────────────────────────────────────────────────────
 

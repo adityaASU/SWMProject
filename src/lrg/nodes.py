@@ -57,6 +57,16 @@ class EdgeType(str, Enum):
     HAVING = "having"
     SUBQUERY_OF = "subquery_of"
     SELECTS = "selects"
+    # ── Professor feedback: explicit inter-graph binding edges ──
+    CONTEXT_PASS = "context_pass"   # outer entity referenced inside inner subgraph
+    BINDING = "binding"             # correlated binding: inner col = outer col
+
+
+class SubqueryType(str, Enum):
+    """Classify nested queries per professor feedback."""
+    UNNESTED = "unnested"                       # no subquery at all
+    NESTED_UNCORRELATED = "nested_uncorrelated" # inner is fully independent
+    NESTED_CORRELATED = "nested_correlated"     # inner references outer table/col
 
 
 # ── Nodes ─────────────────────────────────────────────────────────────────────
@@ -132,13 +142,29 @@ class GroupingNode(BaseNode):
 
 
 class SubgraphNode(BaseNode):
-    """Represents a nested subquery — contains its own inner LRG."""
+    """Represents a nested subquery modeled as a scoped sub-LRG.
+
+    Professor feedback: each SELECT must be its own distinct graph.
+    Inter-graph connections (context_pass, binding edges) are stored
+    explicitly so the synthesizer can reconstruct correlated subqueries.
+    """
 
     node_type: Literal[NodeType.SUBGRAPH] = NodeType.SUBGRAPH
-    role: str = ""                 # e.g. "IN subquery", "EXISTS subquery"
-    # The inner LRG is stored as a nested dict to avoid circular imports;
-    # the synthesizer reconstructs it via LRGGraph.from_dict().
+    role: str = ""                      # "IN subquery", "EXISTS subquery", etc.
+    subquery_type: str = "unnested"     # unnested / nested_uncorrelated / nested_correlated
+
+    # The inner LRG is stored as a nested dict (avoids circular import).
+    # Synthesizer calls LRGGraph.from_dict() to reconstruct it.
     inner_lrg: Optional[dict] = None
+
+    # Correlated binding: outer table/col that inner WHERE references.
+    # e.g. [{"outer_table": "employees", "outer_col": "dept_id",
+    #         "inner_table": "dept_budget", "inner_col": "dept_id"}]
+    correlated_bindings: list = []
+
+    # Operator wrapping this subquery in the outer WHERE/HAVING
+    # e.g. "IN", "NOT IN", "EXISTS", "NOT EXISTS", "="
+    operator: str = "IN"
 
 
 # ── Edges ─────────────────────────────────────────────────────────────────────
