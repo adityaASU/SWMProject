@@ -1,96 +1,301 @@
-"""LRG Text2SQL pipeline — implements BaseText2SQL using the full LRG framework."""
+"""Failure mode analysis for Text2SQL predictions.
+
+Five categories matching the project proposal:
+  1. schema_linking  — wrong table/column referenced
+  2. join_hallucination — join path not valid in schema FK graph
+  3. nested_subquery  — incorrect nesting or aggregation scope
+  4. self_join        — missing or wrong alias for repeated table
+  5. context_drift    — wrong constraint carried from conversation history
+"""
 from __future__ import annotations
 
+import re
+import logging
+from dataclasses import dataclass
 from typing import Optional
 
-from src.baseline.base import BaseText2SQL, PredictionResult
-from src.llm.base import BaseLLM
-from src.lrg.builder import LRGBuilder
-from src.lrg.graph import LRGGraph
-from src.lrg.repair import repair, RepairResult
-from src.lrg.synthesizer import SQLSynthesizer
+import sqlglot
+import sqlglot.expressions as exp
+
 from src.schema.graph import SchemaGraph
 from src.schema.parser import SchemaInfo
 
+logger = logging.getLogger(__name__)
 
-class LRGText2SQL(BaseText2SQL):
-    """End-to-end Text2SQL using Logical Reasoning Graphs.
 
-    Pipeline:
-      1. Build SchemaGraph from SchemaInfo
-      2. LRGBuilder extracts logical components via LLM structured output
-      3. SQLSynthesizer deterministically converts LRG -> SQL
+@dataclass
+class FailureModeResult:
+    is_correct: bool
+    schema_linking: bool = False
+    join_hallucination: bool = False
+    nested_subquery: bool = False
+    self_join: bool = False
+    context_drift: bool = False
+    details: dict = None  # type: ignore[assignment]
+
+    def __post_init__(self):
+        if self.details is None:
+            self.details = {}
+
+    def any_failure(self) -> bool:
+        return any([
+            self.schema_linking,
+            self.join_hallucination,
+            self.nested_subquery,
+            self.self_join,
+            self.context_drift,
+        ])
+
+    def categories(self) -> list[str]:
+        cats = []
+        if self.schema_linking:
+            cats.append("schema_linking")
+        if self.join_hallucination:
+            cats.append("join_hallucination")
+        if self.nested_subquery:
+            cats.append("nested_subquery")
+        if self.self_join:
+            cats.append("self_join")
+        if self.context_drift:
+            cats.append("context_drift")
+        return cats
+
+
+def analyse_failure_modes(
+    predicted_sql: str,
+    gold_sql: str,
+    schema: SchemaInfo,
+    schema_graph: SchemaGraph,
+    is_correct: bool,
+    conversation_history: Optional[list[dict]] = None,
+) -> FailureModeResult:
+    """Analyse *predicted_sql* for structural failure modes.
+
+    Even when *is_correct* is True we run the analysis (for faithfulness measurement).
     """
+    result = FailureModeResult(is_correct=is_correct)
 
-    def __init__(self, llm: BaseLLM) -> None:
-        self._llm = llm
-        self._builder = LRGBuilder(llm)
-        self._synthesizer = SQLSynthesizer()
+    try:
+        pred_parsed = _safe_parse(predicted_sql)
+        gold_parsed = _safe_parse(gold_sql)
+    except Exception as exc:
+        logger.debug("SQL parse error in failure analysis: %s", exc)
+        result.details["parse_error"] = str(exc)
+        return result
 
-    @property
-    def model_name(self) -> str:
-        return f"lrg_{self._llm.name}"
+    if pred_parsed is None:
+        return result
 
-    def predict(
-        self,
-        question: str,
-        schema: SchemaInfo,
-        conversation_history: Optional[list[dict]] = None,
-    ) -> PredictionResult:
-        schema_graph = SchemaGraph(schema)
-        lrg, validation_errors = self._builder.build(
-            question, schema, schema_graph, conversation_history
+    # 1. Schema linking
+    result.schema_linking, result.details["schema_linking"] = _check_schema_linking(
+        pred_parsed, schema
+    )
+
+    # 2. Join hallucination
+    result.join_hallucination, result.details["join_hallucination"] = _check_join_hallucination(
+        pred_parsed, schema_graph
+    )
+
+    # 3. Nested subquery
+    result.nested_subquery, result.details["nested_subquery"] = _check_nested_subquery(
+        pred_parsed, gold_parsed
+    )
+
+    # 4. Self-join
+    result.self_join, result.details["self_join"] = _check_self_join(pred_parsed, gold_parsed)
+
+    # 5. Context drift
+    if conversation_history:
+        result.context_drift, result.details["context_drift"] = _check_context_drift(
+            pred_parsed, gold_parsed, conversation_history
         )
 
-        # ── Professor feedback: self-repair on validation errors ──────────────
-        repair_result = None
-        if validation_errors:
-            repair_result = repair(lrg, schema_graph, validation_errors)
-            if repair_result.success and repair_result.repaired_lrg is not None:
-                lrg = repair_result.repaired_lrg
-                validation_errors = lrg.validate(schema_graph)
+    return result
 
-        sql = self._synthesizer.synthesize(lrg)
 
-        return PredictionResult(
-            question=question,
-            db_id=schema.db_id,
-            predicted_sql=sql,
-            model_name=self.model_name,
-            raw_response="",
-            conversation_history=conversation_history,
-            metadata={
-                "lrg": lrg.to_dict(),
-                "lrg_summary": lrg.summary(),
-                "validation_errors": validation_errors,
-                "repair_applied": repair_result.repairs_applied if repair_result else [],
-                "repair_success": repair_result.success if repair_result else True,
-            },
-        )
+# ── Individual checkers ───────────────────────────────────────────────────────
 
-    def predict_with_lrg(
-        self,
-        question: str,
-        schema: SchemaInfo,
-        conversation_history: Optional[list[dict]] = None,
-    ) -> tuple[PredictionResult, LRGGraph, list[str]]:
-        """Like :meth:`predict` but also returns the LRGGraph and validation errors."""
-        schema_graph = SchemaGraph(schema)
-        lrg, validation_errors = self._builder.build(
-            question, schema, schema_graph, conversation_history
-        )
-        sql = self._synthesizer.synthesize(lrg)
-        result = PredictionResult(
-            question=question,
-            db_id=schema.db_id,
-            predicted_sql=sql,
-            model_name=self.model_name,
-            raw_response="",
-            conversation_history=conversation_history,
-            metadata={
-                "lrg": lrg.to_dict(),
-                "lrg_summary": lrg.summary(),
-                "validation_errors": validation_errors,
-            },
-        )
-        return result, lrg, validation_errors
+def _safe_parse(sql: str):
+    try:
+        return sqlglot.parse_one(sql, dialect="sqlite")
+    except Exception:
+        return None
+
+
+def _check_schema_linking(pred, schema: SchemaInfo) -> tuple[bool, dict]:
+    """Detect references to tables/columns that don't exist in the schema."""
+    known_tables = {t.lower() for t in schema.table_names()}
+    known_cols: set[str] = set()
+    for tinfo in schema.tables.values():
+        for col in tinfo.columns:
+            known_cols.add(col.name.lower())
+
+    bad_tables = []
+    bad_cols = []
+
+    for table in pred.find_all(exp.Table):
+        tname = table.name.lower() if table.name else ""
+        if tname and tname not in known_tables:
+            bad_tables.append(tname)
+
+    for col in pred.find_all(exp.Column):
+        cname = col.name.lower() if col.name else ""
+        if cname and cname not in known_cols and cname != "*":
+            bad_cols.append(cname)
+
+    has_error = bool(bad_tables or bad_cols)
+    return has_error, {"bad_tables": bad_tables, "bad_cols": bad_cols}
+
+
+def _check_join_hallucination(pred, schema_graph: SchemaGraph) -> tuple[bool, dict]:
+    """Detect JOIN clauses between tables with no FK path in the schema graph."""
+    bad_joins = []
+
+    for join in pred.find_all(exp.Join):
+        right_table = join.find(exp.Table)
+        if right_table is None:
+            continue
+        right_name = right_table.name if right_table.name else ""
+
+        # Look for the ON condition to find left table
+        on_cond = join.args.get("on")
+        if on_cond is None:
+            continue
+
+        cols = list(on_cond.find_all(exp.Column))
+        tables_in_on = {col.table.lower() for col in cols if col.table}
+
+        for left_name in tables_in_on:
+            if left_name == right_name.lower():
+                continue
+            path = schema_graph.join_path(left_name, right_name)
+            if path is None:
+                bad_joins.append(f"{left_name} -> {right_name}")
+
+    has_error = bool(bad_joins)
+    return has_error, {"hallucinated_joins": bad_joins}
+
+
+def _check_nested_subquery(pred, gold) -> tuple[bool, dict]:
+    """Classify nested subquery failure mode into 3 types per professor feedback.
+
+    Types:
+      - unnested           : no subquery in gold → pred should also have none
+      - nested_uncorrelated: inner query is independent of outer tables
+      - nested_correlated  : inner query references outer table/column
+    """
+    pred_subqs = list(pred.find_all(exp.Subquery)) if pred else []
+    gold_subqs = list(gold.find_all(exp.Subquery)) if gold else []
+
+    gold_count = len(gold_subqs)
+    pred_count = len(pred_subqs)
+
+    # Determine gold query type
+    if gold_count == 0:
+        gold_type = "unnested"
+    else:
+        gold_type = _classify_subquery_correlation(gold, gold_subqs)
+
+    # Determine pred query type
+    if pred_count == 0:
+        pred_type = "unnested"
+    else:
+        pred_type = _classify_subquery_correlation(pred, pred_subqs)
+
+    has_error = (gold_type != pred_type) or (gold_count != pred_count)
+
+    return has_error, {
+        "gold_type": gold_type,
+        "pred_type": pred_type,
+        "gold_subquery_count": gold_count,
+        "pred_subquery_count": pred_count,
+        "type_mismatch": gold_type != pred_type,
+    }
+
+
+def _classify_subquery_correlation(parsed, subqueries: list) -> str:
+    """Determine if subqueries are correlated or uncorrelated.
+
+    A subquery is CORRELATED if its WHERE clause references a table
+    that also appears in the outer FROM/JOIN.
+    """
+    # Collect outer tables
+    outer_tables: set[str] = set()
+    for tbl in parsed.find_all(exp.Table):
+        # Skip tables that are inside a subquery
+        if any(tbl.find_ancestor(exp.Subquery) is not None for _ in [1]):
+            continue
+        if tbl.name:
+            outer_tables.add(tbl.name.lower())
+
+    for sq in subqueries:
+        for col in sq.find_all(exp.Column):
+            tbl_ref = col.table
+            if tbl_ref and tbl_ref.lower() in outer_tables:
+                return "nested_correlated"
+
+    return "nested_uncorrelated"
+
+
+def _check_self_join(pred, gold) -> tuple[bool, dict]:
+    """Detect missing or wrong aliasing in self-joins."""
+    pred_tables = _collect_table_refs(pred)
+    gold_tables = _collect_table_refs(gold)
+
+    # Self-join needed if any table appears multiple times in gold
+    gold_self_join_tables = {t for t, cnt in gold_tables.items() if cnt > 1}
+    pred_self_join_tables = {t for t, cnt in pred_tables.items() if cnt > 1}
+
+    missing = gold_self_join_tables - pred_self_join_tables
+    return bool(missing), {"missing_self_join_tables": list(missing)}
+
+
+def _collect_table_refs(parsed) -> dict[str, int]:
+    if parsed is None:
+        return {}
+    counts: dict[str, int] = {}
+    for table in parsed.find_all(exp.Table):
+        name = (table.name or "").lower()
+        if name:
+            counts[name] = counts.get(name, 0) + 1
+    return counts
+
+
+def _check_context_drift(pred, gold, history: list[dict]) -> tuple[bool, dict]:
+    """Detect when predicted SQL ignores constraints from conversation history."""
+    if not history:
+        return False, {}
+
+    # Heuristic: check if gold references tables from previous turns
+    # that pred omits entirely
+    prev_tables: set[str] = set()
+    for turn in history[:-1]:
+        sql = turn.get("sql", "")
+        if sql:
+            try:
+                parsed = sqlglot.parse_one(sql, dialect="sqlite")
+                for t in parsed.find_all(exp.Table):
+                    if t.name:
+                        prev_tables.add(t.name.lower())
+            except Exception:
+                pass
+
+    gold_tables = set(_collect_table_refs(gold).keys())
+    pred_tables = set(_collect_table_refs(pred).keys())
+
+    # Tables in gold that came from history but are missing from pred
+    drifted = (gold_tables & prev_tables) - pred_tables
+    return bool(drifted), {"drifted_tables": list(drifted)}
+
+
+def summarise_failures(results: list[FailureModeResult]) -> dict:
+    """Aggregate failure mode counts across a list of results."""
+    total = len(results)
+    if total == 0:
+        return {}
+    categories = ["schema_linking", "join_hallucination", "nested_subquery", "self_join", "context_drift"]
+    summary = {"total": total, "correct": sum(1 for r in results if r.is_correct)}
+    for cat in categories:
+        summary[cat] = sum(1 for r in results if getattr(r, cat))
+        summary[f"{cat}_rate"] = round(summary[cat] / total, 4)
+    return summary
