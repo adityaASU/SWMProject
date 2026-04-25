@@ -11,22 +11,23 @@ Supports **Gemini** (cloud) and **Ollama** (local GPU) as LLM backends, plug-and
 ## Table of Contents
 
 1. [How it Works](#how-it-works)
-2. [Prerequisites](#prerequisites)
-3. [Step 1 — Clone & Install](#step-1--clone--install)
-4. [Step 2 — Choose an LLM Backend](#step-2--choose-an-llm-backend)
+2. [Professor Feedback Implementation](#professor-feedback-implementation)
+3. [Prerequisites](#prerequisites)
+4. [Step 1 — Clone & Install](#step-1--clone--install)
+5. [Step 2 — Choose an LLM Backend](#step-2--choose-an-llm-backend)
    - [Option A: Ollama (local, recommended)](#option-a-ollama-local-recommended)
    - [Option B: Gemini (cloud)](#option-b-gemini-cloud)
-5. [Step 3 — Download the Spider Dataset](#step-3--download-the-spider-dataset)
-6. [Step 4 — Run a Single Query](#step-4--run-a-single-query)
-7. [Step 5 — Run a Benchmark](#step-5--run-a-benchmark)
-8. [Step 6 — Start the API](#step-6--start-the-api)
-9. [Step 7 — Start the UI](#step-7--start-the-ui)
-10. [Troubleshooting](#troubleshooting)
-11. [Adding a New Baseline](#adding-a-new-baseline)
-12. [Adding a Custom Dataset](#adding-a-custom-dataset)
-13. [Running Tests](#running-tests)
-14. [Documentation Index](#documentation-index)
-15. [Project Structure](#project-structure)
+6. [Step 3 — Download the Spider Dataset](#step-3--download-the-spider-dataset)
+7. [Step 4 — Run a Single Query](#step-4--run-a-single-query)
+8. [Step 5 — Run a Benchmark](#step-5--run-a-benchmark)
+9. [Step 6 — Start the API](#step-6--start-the-api)
+10. [Step 7 — Start the UI](#step-7--start-the-ui)
+11. [Troubleshooting](#troubleshooting)
+12. [Adding a New Baseline](#adding-a-new-baseline)
+13. [Adding a Custom Dataset](#adding-a-custom-dataset)
+14. [Running Tests](#running-tests)
+15. [Documentation Index](#documentation-index)
+16. [Project Structure](#project-structure)
 
 ---
 
@@ -54,6 +55,12 @@ Natural Language Question
            │                 └────────────┬───────────┘
            │                              │
            │                 ┌────────────▼───────────┐
+           │                 │  Self-Repair Module      │
+           │                 │  (repair.py)             │
+           │                 │  Auto-fix validation err │
+           │                 └────────────┬───────────┘
+           │                              │
+           │                 ┌────────────▼───────────┐
            │                 │  SQL Synthesizer         │
            │                 │  (deterministic, no LLM) │
            │                 └────────────┬───────────┘
@@ -67,6 +74,34 @@ Natural Language Question
 ```
 
 The key idea: instead of asking the LLM to write SQL directly, we ask it to identify *logical components* (tables, columns, filters, aggregations) as structured JSON. Python then assembles a **Logical Reasoning Graph** and deterministically synthesizes SQL from it — no LLM hallucination in the final SQL generation step.
+
+---
+
+## Professor Feedback Implementation
+
+Per feedback from **Prof. Hasan Davulcu (CSE 573)**:
+
+> *"model each SELECT statement as its own distinct graph or scoped subgraph. Ensure that all inter-graph connections and relationships — specifically context passing, dependencies, filter usage, operator types, and binding edges — are mapped explicitly."*
+
+> *"systematically analyze the distinct failure modes associated with unnested, nested uncorrelated, and nested correlated queries. Use this analysis to program targeted tests, error detection, and correction routines directly into your pipeline, enabling the system to actively learn from its mistakes and self-repair over time."*
+
+### What was implemented:
+
+| Feedback | Implementation |
+|---|---|
+| Each SELECT = own scoped subgraph | `SubgraphNode` now contains a real `inner_lrg` field — each nested SELECT is its own LRG |
+| Inter-graph connections mapped explicitly | Added `CONTEXT_PASS` and `BINDING` to `EdgeType` in `nodes.py` |
+| Unnested / nested uncorrelated / nested correlated classification | `failure_modes.py` classifies every query into one of 3 types |
+| Targeted error detection + correction routines | New `repair.py` module with 3 repair routines |
+| Self-repair over time | `pipeline.py` automatically calls `repair()` before SQL synthesis |
+
+### Files changed:
+- `src/lrg/nodes.py` — added `SubqueryType` enum, `CONTEXT_PASS` and `BINDING` edge types, expanded `SubgraphNode`
+- `src/lrg/builder.py` — real inner LRG construction + nested query type classification
+- `src/lrg/synthesizer.py` — nested SELECT synthesis from `SubgraphNode`
+- `src/lrg/pipeline.py` — auto repair integration before SQL synthesis
+- `src/evaluation/failure_modes.py` — 3-way nested query classification
+- `src/lrg/repair.py` — **new** self-repair module
 
 ---
 
@@ -257,7 +292,8 @@ python scripts/run_query.py --db college_2 --question "List all students" --mode
 python scripts/run_query.py --db college_2 --question "..." --show-lrg-json
 ```
 
-**Expected output:**
+Expected output:
+
 ```
 Model  : lrg
 DB     : college_2
@@ -493,14 +529,24 @@ text2sql-lrg/
 │   │   └── registry.py   ← model name → class mapping
 │   ├── lrg/
 │   │   ├── nodes.py      ← all LRG node/edge types (Pydantic)
+│   │   │                    + SubqueryType, CONTEXT_PASS, BINDING edges
 │   │   ├── graph.py      ← LRGGraph DiGraph wrapper + validation
 │   │   ├── builder.py    ← NL → LRG via structured LLM call
+│   │   │                    + scoped subgraph construction
+│   │   │                    + nested_correlated/uncorrelated classification
 │   │   ├── synthesizer.py← LRG → SQL (deterministic, no LLM)
+│   │   │                    + nested SELECT synthesis from SubgraphNode
+│   │   ├── repair.py     ← self-repair module (NEW — professor feedback)
+│   │   │                    + hallucinated join repair via FK path
+│   │   │                    + unknown table removal
+│   │   │                    + self-join alias correction
 │   │   ├── visualizer.py ← renders LRG as PNG
 │   │   └── pipeline.py   ← LRGText2SQL end-to-end wrapper
+│   │                        + auto repair on validation errors
 │   ├── evaluation/
 │   │   ├── metrics.py    ← EM, EX, component-level scores
 │   │   ├── failure_modes.py ← 5 failure category classifiers
+│   │   │                      + 3-way nested query classification
 │   │   └── explainability.py← faithfulness, traceability
 │   ├── benchmark/
 │   │   ├── datasets/     ← Spider, CoSQL, Custom dataset loaders
