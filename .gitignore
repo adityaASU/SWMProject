@@ -42,3 +42,4 @@ htmlcov/
 
 # Streamlit
 .streamlit/secrets.toml
+cosql_dataset.zip
