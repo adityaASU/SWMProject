@@ -116,6 +116,27 @@ _EXTRACTION_SCHEMA = {
                 "required": ["role", "description"],
             },
         },
+        "order_by": {
+            "type": "array",
+            "description": "ORDER BY columns",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "table": {"type": "string"},
+                    "column": {"type": "string"},
+                    "direction": {"type": "string", "enum": ["ASC", "DESC"]},
+                },
+                "required": ["table", "column", "direction"],
+            },
+        },
+        "limit": {
+            "type": "integer",
+            "description": "LIMIT value if present, else 0",
+        },
+        "distinct": {
+            "type": "boolean",
+            "description": "True if SELECT DISTINCT is needed",
+        },
         "join_hints": {
             "type": "array",
             "description": "Explicit join paths between tables (table names only)",
@@ -160,6 +181,9 @@ You MUST respond with a JSON object using EXACTLY these keys:
   "filters": [
     {{"table": "<table_name>", "column": "<column_name>", "operator": "=", "value": "<val>", "is_having": false}}
   ],
+  "order_by": [],
+  "limit": 0,
+  "distinct": false,
   "join_hints": [],
   "subqueries": [],
   "is_self_join": false,
@@ -173,6 +197,41 @@ Example — "How many students are in each department?":
   "aggregations": [{{"function": "COUNT", "table": "student", "column": "*", "output_alias": "cnt", "table_alias": ""}}],
   "group_by": [{{"table": "student", "column": "dept_name"}}],
   "filters": [],
+  "order_by": [],
+  "limit": 0,
+  "distinct": false,
+  "join_hints": [],
+  "subqueries": [],
+  "is_self_join": false,
+  "has_subquery": false
+}}
+
+Example — "Show all singers ordered by age from oldest to youngest":
+{{
+  "main_entities": [{{"table": "singer", "alias": "", "role": "", "is_main": true}}],
+  "select_attributes": [{{"table": "singer", "column": "name", "alias": ""}}, {{"table": "singer", "column": "age", "alias": ""}}],
+  "aggregations": [],
+  "group_by": [],
+  "filters": [],
+  "order_by": [{{"table": "singer", "column": "age", "direction": "DESC"}}],
+  "limit": 0,
+  "distinct": false,
+  "join_hints": [],
+  "subqueries": [],
+  "is_self_join": false,
+  "has_subquery": false
+}}
+
+Example — "What are all distinct countries where singers are from?":
+{{
+  "main_entities": [{{"table": "singer", "alias": "", "role": "", "is_main": true}}],
+  "select_attributes": [{{"table": "singer", "column": "country", "alias": ""}}],
+  "aggregations": [],
+  "group_by": [],
+  "filters": [],
+  "order_by": [],
+  "limit": 0,
+  "distinct": true,
   "join_hints": [],
   "subqueries": [],
   "is_self_join": false,
@@ -250,6 +309,12 @@ class LRGBuilder:
 
     def _assemble(self, raw: dict, schema: SchemaInfo, schema_graph: SchemaGraph) -> LRGGraph:
         lrg = LRGGraph()
+
+        # Store order_by, limit, distinct in metadata for synthesizer
+        lrg.metadata["order_by"] = raw.get("order_by", [])
+        lrg.metadata["limit"] = raw.get("limit", 0)
+        lrg.metadata["distinct"] = raw.get("distinct", False)
+
         # Maps (table, alias_or_empty) -> node_id
         entity_map: dict[tuple[str, str], str] = {}
 

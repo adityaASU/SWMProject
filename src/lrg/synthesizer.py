@@ -41,8 +41,11 @@ class SQLSynthesizer:
         where_clause = self._where(lrg)
         group_clause = self._group_by(lrg)
         having_clause = self._having(lrg)
+        order_clause = self._order_by(lrg)
+        limit_clause = self._limit(lrg)
 
-        parts = [f"SELECT {select_clause}", f"FROM {from_clause}"]
+        distinct_prefix = "DISTINCT " if lrg.metadata.get("distinct") else ""
+        parts = [f"SELECT {distinct_prefix}{select_clause}", f"FROM {from_clause}"]
         if join_clause:
             parts.append(join_clause)
         if where_clause:
@@ -51,13 +54,16 @@ class SQLSynthesizer:
             parts.append(f"GROUP BY {group_clause}")
         if having_clause:
             parts.append(f"HAVING {having_clause}")
+        if order_clause:
+            parts.append(f"ORDER BY {order_clause}")
+        if limit_clause:
+            parts.append(f"LIMIT {limit_clause}")
 
         # ── Professor feedback: each SubgraphNode = its own SELECT block ──
         for sq_node in lrg.nodes_of_type(NodeType.SUBGRAPH):
             assert isinstance(sq_node, SubgraphNode)
             sq_sql = self._subquery_sql(sq_node, lrg)
             if sq_sql:
-                # Attach to WHERE if no WHERE yet, else append with AND
                 subq_expr = f"{sq_node.operator} (\n  {sq_sql}\n)"
                 if "WHERE" not in "\n".join(parts):
                     parts.append(f"WHERE {subq_expr}")
@@ -68,6 +74,28 @@ class SQLSynthesizer:
                     ]
 
         return "\n".join(parts)
+
+    # ── ORDER BY ──────────────────────────────────────────────────────────────
+
+    def _order_by(self, lrg: LRGGraph) -> str:
+        order_cols = lrg.metadata.get("order_by", [])
+        if not order_cols:
+            return ""
+        multi_table = self._is_multi_table(lrg)
+        parts = []
+        for col in order_cols:
+            ref = _col_ref(col.get("table", ""), col.get("column", ""), None, multi_table)
+            direction = col.get("direction", "ASC").upper()
+            parts.append(f"{ref} {direction}")
+        return ", ".join(parts)
+
+    # ── LIMIT ─────────────────────────────────────────────────────────────────
+
+    def _limit(self, lrg: LRGGraph) -> str:
+        limit = lrg.metadata.get("limit", 0)
+        if limit and int(limit) > 0:
+            return str(int(limit))
+        return ""
 
     def _subquery_sql(self, sq_node: SubgraphNode, outer_lrg: LRGGraph) -> str:
         """Synthesize SQL for an inner scoped subgraph.

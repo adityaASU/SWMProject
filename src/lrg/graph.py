@@ -29,6 +29,7 @@ class LRGGraph:
         self._g: nx.DiGraph = nx.DiGraph()
         self._nodes: dict[str, LRGNode] = {}
         self._edges: list[LRGEdge] = []
+        self.metadata: dict = {}  # stores order_by, limit, distinct
 
     # ── Mutation API ──────────────────────────────────────────────────────────
 
