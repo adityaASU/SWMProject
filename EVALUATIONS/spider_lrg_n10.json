@@ -1,0 +1,482 @@
+{
+  "run_id": "3db60092",
+  "timestamp": "2026-04-26T02:05:43.413168",
+  "model": "lrg_ollama/llama3.2:3b",
+  "dataset": "spider",
+  "n_examples": 10,
+  "exact_match": 0.2,
+  "execution_accuracy": 0.5,
+  "component_scores": {
+    "group by": 0.3,
+    "order by": 0.8,
+    "select": 0.3,
+    "from": 1.0,
+    "limit": 0.8,
+    "join": 1.0,
+    "where": 0.7,
+    "having": 0.8
+  },
+  "failure_summary": {
+    "total": 10,
+    "correct": 2,
+    "schema_linking": 0,
+    "schema_linking_rate": 0.0,
+    "join_hallucination": 0,
+    "join_hallucination_rate": 0.0,
+    "nested_subquery": 0,
+    "nested_subquery_rate": 0.0,
+    "self_join": 0,
+    "self_join_rate": 0.0,
+    "context_drift": 0,
+    "context_drift_rate": 0.0
+  },
+  "explainability_summary": {
+    "mean_faithfulness": 1.0,
+    "mean_completeness": 0.8333,
+    "error_traceability_rate": 0.0,
+    "n_examples": 10
+  },
+  "elapsed_seconds": 947.16,
+  "per_example": [
+    {
+      "example_id": "0",
+      "db_id": "concert_singer",
+      "question": "How many singers do we have?",
+      "gold_sql": "SELECT count(*) FROM singer",
+      "predicted_sql": "SELECT COUNT(*)\nFROM singer",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 86589.5,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.6667,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 2 nodes, 1 edges\n  entity: 1\n  aggregation: 1"
+    },
+    {
+      "example_id": "1",
+      "db_id": "concert_singer",
+      "question": "What is the total number of singers?",
+      "gold_sql": "SELECT count(*) FROM singer",
+      "predicted_sql": "SELECT COUNT(*)\nFROM singer",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 76796.4,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 2 nodes, 1 edges\n  entity: 1\n  aggregation: 1"
+    },
+    {
+      "example_id": "2",
+      "db_id": "concert_singer",
+      "question": "Show name, country, age for all singers ordered by age from the oldest to the youngest.",
+      "gold_sql": "SELECT name ,  country ,  age FROM singer ORDER BY age DESC",
+      "predicted_sql": "SELECT Name, Country, Age\nFROM singer\nGROUP BY Age\nORDER BY Age DESC",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 91903.6,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.6667,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 5 nodes, 3 edges\n  entity: 1\n  attribute: 3\n  grouping: 1"
+    },
+    {
+      "example_id": "3",
+      "db_id": "concert_singer",
+      "question": "What are the names, countries, and ages for every singer in descending order of age?",
+      "gold_sql": "SELECT name ,  country ,  age FROM singer ORDER BY age DESC",
+      "predicted_sql": "SELECT Name, Country, Age\nFROM singer\nGROUP BY Age\nORDER BY Age DESC",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 93194.0,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.6667,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 5 nodes, 3 edges\n  entity: 1\n  attribute: 3\n  grouping: 1"
+    },
+    {
+      "example_id": "4",
+      "db_id": "concert_singer",
+      "question": "What is the average, minimum, and maximum age of all singers from France?",
+      "gold_sql": "SELECT avg(age) ,  min(age) ,  max(age) FROM singer WHERE country  =  'France'",
+      "predicted_sql": "SELECT AVG(Age) AS avg_age, MIN(Age) AS min_age, MAX(Age) AS max_age, Age\nFROM singer\nWHERE Country = 'France'\nGROUP BY Country",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 115965.6,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 7 nodes, 8 edges\n  entity: 1\n  attribute: 1\n  aggregation: 3\n  filter: 1\n  grouping: 1"
+    },
+    {
+      "example_id": "5",
+      "db_id": "concert_singer",
+      "question": "What is the average, minimum, and maximum age for all French singers?",
+      "gold_sql": "SELECT avg(age) ,  min(age) ,  max(age) FROM singer WHERE country  =  'France'",
+      "predicted_sql": "SELECT AVG(Age) AS avg_age, MIN(Age) AS min_age, MAX(Age) AS max_age, Age\nFROM singer\nWHERE Country = 'France'\nGROUP BY Country",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 106701.2,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 7 nodes, 8 edges\n  entity: 1\n  attribute: 1\n  aggregation: 3\n  filter: 1\n  grouping: 1"
+    },
+    {
+      "example_id": "6",
+      "db_id": "concert_singer",
+      "question": "Show the name and the release year of the song by the youngest singer.",
+      "gold_sql": "SELECT song_name ,  song_release_year FROM singer ORDER BY age LIMIT 1",
+      "predicted_sql": "SELECT singer.Name, singer.Song_Name, singer.Song_release_year\nFROM singer\nWHERE concert.Year = ''\nGROUP BY singer.Age\nHAVING singer_in_concert.Singer_ID = ''\nORDER BY singer.Age ASC",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": false,
+        "having": false,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 109519.4,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 8 nodes, 4 edges\n  entity: 2\n  attribute: 3\n  filter: 2\n  grouping: 1"
+    },
+    {
+      "example_id": "7",
+      "db_id": "concert_singer",
+      "question": "What are the names and release years for all the songs of the youngest singer?",
+      "gold_sql": "SELECT song_name ,  song_release_year FROM singer ORDER BY age LIMIT 1",
+      "predicted_sql": "SELECT Name, Song_Name\nFROM singer\nGROUP BY Age\nHAVING Age = 'MIN'\nORDER BY Age ASC",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": false,
+        "having": false,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 91750.4,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 5 nodes, 2 edges\n  entity: 1\n  attribute: 2\n  filter: 1\n  grouping: 1"
+    },
+    {
+      "example_id": "8",
+      "db_id": "concert_singer",
+      "question": "What are all distinct countries where singers above age 20 are from?",
+      "gold_sql": "SELECT DISTINCT country FROM singer WHERE age  >  20",
+      "predicted_sql": "SELECT DISTINCT Country\nFROM singer\nWHERE Age >= '20'",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 82732.4,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.6667,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 3 nodes, 2 edges\n  entity: 1\n  attribute: 1\n  filter: 1"
+    },
+    {
+      "example_id": "9",
+      "db_id": "concert_singer",
+      "question": "What are  the different countries with singers above age 20?",
+      "gold_sql": "SELECT DISTINCT country FROM singer WHERE age  >  20",
+      "predicted_sql": "SELECT DISTINCT singer.country, concert.Theme\nFROM singer\nWHERE singer.Age >= '20'\nGROUP BY singer.Age",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 91982.2,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.6667,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 6 nodes, 3 edges\n  entity: 2\n  attribute: 2\n  filter: 1\n  grouping: 1"
+    }
+  ]
+}

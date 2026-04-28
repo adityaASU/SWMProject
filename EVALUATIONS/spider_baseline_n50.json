@@ -1,0 +1,2427 @@
+{
+  "run_id": "a3d77d36",
+  "timestamp": "2026-04-26T03:48:18.337173",
+  "model": "prompt_baseline_zero_shot_ollama/llama3.2:3b",
+  "dataset": "spider",
+  "n_examples": 50,
+  "exact_match": 0.24,
+  "execution_accuracy": 0.58,
+  "component_scores": {
+    "where": 0.48,
+    "select": 0.18,
+    "from": 0.42,
+    "order by": 0.8,
+    "limit": 0.84,
+    "having": 1.0,
+    "group by": 0.8,
+    "join": 0.42
+  },
+  "failure_summary": {
+    "total": 50,
+    "correct": 12,
+    "schema_linking": 2,
+    "schema_linking_rate": 0.04,
+    "join_hallucination": 29,
+    "join_hallucination_rate": 0.58,
+    "nested_subquery": 6,
+    "nested_subquery_rate": 0.12,
+    "self_join": 4,
+    "self_join_rate": 0.08,
+    "context_drift": 0,
+    "context_drift_rate": 0.0
+  },
+  "explainability_summary": {},
+  "elapsed_seconds": 489.55,
+  "per_example": [
+    {
+      "example_id": "0",
+      "db_id": "concert_singer",
+      "question": "How many singers do we have?",
+      "gold_sql": "SELECT count(*) FROM singer",
+      "predicted_sql": "SELECT COUNT(Singer_ID) FROM singer",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 35921.3,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "1",
+      "db_id": "concert_singer",
+      "question": "What is the total number of singers?",
+      "gold_sql": "SELECT count(*) FROM singer",
+      "predicted_sql": "SELECT COUNT(*) FROM singer",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 2209.9,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "2",
+      "db_id": "concert_singer",
+      "question": "Show name, country, age for all singers ordered by age from the oldest to the youngest.",
+      "gold_sql": "SELECT name ,  country ,  age FROM singer ORDER BY age DESC",
+      "predicted_sql": "SELECT Name, Country, Age FROM singer ORDER BY Age DESC",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 5436.5,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "3",
+      "db_id": "concert_singer",
+      "question": "What are the names, countries, and ages for every singer in descending order of age?",
+      "gold_sql": "SELECT name ,  country ,  age FROM singer ORDER BY age DESC",
+      "predicted_sql": "SELECT Name, Country, Age FROM singer ORDER BY Age DESC",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 6523.2,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "4",
+      "db_id": "concert_singer",
+      "question": "What is the average, minimum, and maximum age of all singers from France?",
+      "gold_sql": "SELECT avg(age) ,  min(age) ,  max(age) FROM singer WHERE country  =  'France'",
+      "predicted_sql": "SELECT AVG(Age) ,  MIN(Age) ,  MAX(Age) FROM singer WHERE Country = 'France'",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 6286.8,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "5",
+      "db_id": "concert_singer",
+      "question": "What is the average, minimum, and maximum age for all French singers?",
+      "gold_sql": "SELECT avg(age) ,  min(age) ,  max(age) FROM singer WHERE country  =  'France'",
+      "predicted_sql": "SELECT AVG(Age), MIN(Age), MAX(Age) FROM singer WHERE Country = 'France'",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 6302.5,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "6",
+      "db_id": "concert_singer",
+      "question": "Show the name and the release year of the song by the youngest singer.",
+      "gold_sql": "SELECT song_name ,  song_release_year FROM singer ORDER BY age LIMIT 1",
+      "predicted_sql": "SELECT T1.Name, T2.Song_release_year FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID ORDER BY T1.Age LIMIT 1",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": false,
+        "limit": true
+      },
+      "elapsed_ms": 10169.6,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "7",
+      "db_id": "concert_singer",
+      "question": "What are the names and release years for all the songs of the youngest singer?",
+      "gold_sql": "SELECT song_name ,  song_release_year FROM singer ORDER BY age LIMIT 1",
+      "predicted_sql": "SELECT T1.Name, T2.Song_release_year FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID WHERE T1.Age = ( SELECT MIN(Age) FROM singer )",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 16098.8,
+      "failure_modes": [
+        "join_hallucination",
+        "nested_subquery"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 1,
+          "type_mismatch": true
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "8",
+      "db_id": "concert_singer",
+      "question": "What are all distinct countries where singers above age 20 are from?",
+      "gold_sql": "SELECT DISTINCT country FROM singer WHERE age  >  20",
+      "predicted_sql": "SELECT DISTINCT T2.Country FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID WHERE T1.Age > 20",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 6572.6,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "9",
+      "db_id": "concert_singer",
+      "question": "What are  the different countries with singers above age 20?",
+      "gold_sql": "SELECT DISTINCT country FROM singer WHERE age  >  20",
+      "predicted_sql": "SELECT DISTINCT T2.Country FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID WHERE T1.Age > 20",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 6298.8,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "10",
+      "db_id": "concert_singer",
+      "question": "Show all countries and the number of singers in each country.",
+      "gold_sql": "SELECT country ,  count(*) FROM singer GROUP BY country",
+      "predicted_sql": "SELECT Country, COUNT(*) FROM singer GROUP BY Country",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 2513.7,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "11",
+      "db_id": "concert_singer",
+      "question": "How many singers are from each country?",
+      "gold_sql": "SELECT country ,  count(*) FROM singer GROUP BY country",
+      "predicted_sql": "SELECT COUNT(Country) FROM singer GROUP BY Country",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 2300.0,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "12",
+      "db_id": "concert_singer",
+      "question": "List all song names by singers above the average age.",
+      "gold_sql": "SELECT song_name FROM singer WHERE age  >  (SELECT avg(age) FROM singer)",
+      "predicted_sql": "SELECT T1.Song_Name FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID WHERE T1.Age > ( SELECT AVG(Age) FROM singer )",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 8481.8,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "nested_uncorrelated",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 1,
+          "pred_subquery_count": 1,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "13",
+      "db_id": "concert_singer",
+      "question": "What are all the song names by singers who are older than average?",
+      "gold_sql": "SELECT song_name FROM singer WHERE age  >  (SELECT avg(age) FROM singer)",
+      "predicted_sql": "SELECT T1.Song_Name FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID INNER JOIN concert AS T3 ON T2.concert_ID = T3.concert_ID WHERE T1.Age > ( SELECT AVG(Age) FROM singer )",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 10625.1,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert",
+            "t3 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "nested_uncorrelated",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 1,
+          "pred_subquery_count": 1,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "14",
+      "db_id": "concert_singer",
+      "question": "Show location and name for all stadiums with a capacity between 5000 and 10000.",
+      "gold_sql": "SELECT LOCATION ,  name FROM stadium WHERE capacity BETWEEN 5000 AND 10000",
+      "predicted_sql": "SELECT Location, Name FROM stadium WHERE Capacity BETWEEN 5000 AND 10000",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 3611.2,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "15",
+      "db_id": "concert_singer",
+      "question": "What are the locations and names of all stations with capacity between 5000 and 10000?",
+      "gold_sql": "SELECT LOCATION ,  name FROM stadium WHERE capacity BETWEEN 5000 AND 10000",
+      "predicted_sql": "SELECT Location, Name FROM stadium WHERE Capacity BETWEEN 5000 AND 10000",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 3669.9,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "16",
+      "db_id": "concert_singer",
+      "question": "What is the maximum capacity and the average of all stadiums ?",
+      "gold_sql": "select max(capacity), average from stadium",
+      "predicted_sql": "SELECT MAX(Capacity) ,  AVG(Average) FROM stadium",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 2930.6,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "17",
+      "db_id": "concert_singer",
+      "question": "What is the average and maximum capacities for all stadiums ?",
+      "gold_sql": "select avg(capacity) ,  max(capacity) from stadium",
+      "predicted_sql": "SELECT AVG(Capacity) ,  MAX(Capacity) FROM stadium",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 3691.0,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "18",
+      "db_id": "concert_singer",
+      "question": "What is the name and capacity for the stadium with highest average attendance?",
+      "gold_sql": "SELECT name ,  capacity FROM stadium ORDER BY average DESC LIMIT 1",
+      "predicted_sql": "SELECT Name, Capacity FROM stadium WHERE Average = ( SELECT MAX(Average) FROM stadium )",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 6905.9,
+      "failure_modes": [
+        "nested_subquery"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 1,
+          "type_mismatch": true
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "19",
+      "db_id": "concert_singer",
+      "question": "What is the name and capacity for the stadium with the highest average attendance?",
+      "gold_sql": "SELECT name ,  capacity FROM stadium ORDER BY average DESC LIMIT 1",
+      "predicted_sql": "SELECT Name, Capacity FROM stadium WHERE Average = ( SELECT MAX(Average) FROM stadium )",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 3326.0,
+      "failure_modes": [
+        "nested_subquery"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 1,
+          "type_mismatch": true
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "20",
+      "db_id": "concert_singer",
+      "question": "How many concerts are there in year 2014 or 2015?",
+      "gold_sql": "SELECT count(*) FROM concert WHERE YEAR  =  2014 OR YEAR  =  2015",
+      "predicted_sql": "SELECT COUNT(*) FROM concert WHERE YEAR IN ('2014', '2015')",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 4788.2,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "21",
+      "db_id": "concert_singer",
+      "question": "How many concerts occurred in 2014 or 2015?",
+      "gold_sql": "SELECT count(*) FROM concert WHERE YEAR  =  2014 OR YEAR  =  2015",
+      "predicted_sql": "SELECT COUNT(*) FROM concert WHERE YEAR IN ('2014', '2015')",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 3950.4,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "22",
+      "db_id": "concert_singer",
+      "question": "Show the stadium name and the number of concerts in each stadium.",
+      "gold_sql": "SELECT T2.name ,  count(*) FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id GROUP BY T1.stadium_id",
+      "predicted_sql": "SELECT T1.Name, COUNT(T2.concert_ID) FROM stadium AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Stadium_ID = T2.Stadium_ID GROUP BY T1.Name",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 8427.5,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "23",
+      "db_id": "concert_singer",
+      "question": "For each stadium, how many concerts play there?",
+      "gold_sql": "SELECT T2.name ,  count(*) FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id GROUP BY T1.stadium_id",
+      "predicted_sql": "SELECT COUNT(T1.concert_ID) FROM concert AS T1 INNER JOIN singer_in_concert AS T2 ON T1.concert_ID = T2.concert_ID INNER JOIN stadium AS T3 ON T1.Stadium_ID = T3.Stadium_ID GROUP BY T3.Stadium_ID",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 16161.8,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert",
+            "t1 -> stadium",
+            "t3 -> stadium"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "24",
+      "db_id": "concert_singer",
+      "question": "Show the stadium name and capacity with most number of concerts in year 2014 or after.",
+      "gold_sql": "SELECT T2.name ,  T2.capacity FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id WHERE T1.year  >=  2014 GROUP BY T2.stadium_id ORDER BY count(*) DESC LIMIT 1",
+      "predicted_sql": "SELECT T1.Name, T2.Capacity FROM stadium AS T1 INNER JOIN ( SELECT T3.Stadium_ID, COUNT(T1.Stadium_ID) AS num_concerts FROM concert AS T2 INNER JOIN singer_in_concert AS T3 ON T2.concert_ID = T3.concert_ID WHERE SUBSTR(T2.Year, -4) >= '2014' GROUP BY T3.Stadium_ID ) AS T4 ON T1.Stadium_ID = T4.Stadium_ID",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": false,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 19715.4,
+      "failure_modes": [
+        "join_hallucination",
+        "nested_subquery"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t4 -> concert",
+            "t1 -> concert",
+            "t3 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 1,
+          "type_mismatch": true
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "25",
+      "db_id": "concert_singer",
+      "question": "What is the name and capacity of the stadium with the most concerts after 2013 ?",
+      "gold_sql": "select t2.name ,  t2.capacity from concert as t1 join stadium as t2 on t1.stadium_id  =  t2.stadium_id where t1.year  >  2013 group by t2.stadium_id order by count(*) desc limit 1",
+      "predicted_sql": "SELECT T1.Name, T2.Capacity FROM stadium AS T1 INNER JOIN concert AS T2 ON T1.Stadium_ID = T2.Stadium_ID WHERE T2.Year > '2013' GROUP BY T1.Name ORDER BY COUNT(T2.concert_ID) DESC LIMIT 1",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": false,
+        "having": true,
+        "order by": false,
+        "limit": true
+      },
+      "elapsed_ms": 17958.6,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "26",
+      "db_id": "concert_singer",
+      "question": "Which year has most number of concerts?",
+      "gold_sql": "SELECT YEAR FROM concert GROUP BY YEAR ORDER BY count(*) DESC LIMIT 1",
+      "predicted_sql": "SELECT Year FROM concert GROUP BY Year ORDER BY COUNT(*) DESC LIMIT 1",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 8549.3,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "27",
+      "db_id": "concert_singer",
+      "question": "What is the year that had the most concerts?",
+      "gold_sql": "SELECT YEAR FROM concert GROUP BY YEAR ORDER BY count(*) DESC LIMIT 1",
+      "predicted_sql": "SELECT Year FROM concert GROUP BY Year ORDER BY COUNT(*) DESC LIMIT 1",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 8517.4,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "28",
+      "db_id": "concert_singer",
+      "question": "Show the stadium names without any concert.",
+      "gold_sql": "SELECT name FROM stadium WHERE stadium_id NOT IN (SELECT stadium_id FROM concert)",
+      "predicted_sql": "SELECT Name FROM stadium WHERE Stadium_ID NOT IN ( SELECT Stadium_ID FROM concert )",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 8430.0,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "nested_uncorrelated",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 1,
+          "pred_subquery_count": 1,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "29",
+      "db_id": "concert_singer",
+      "question": "What are the names of the stadiums without any concerts?",
+      "gold_sql": "SELECT name FROM stadium WHERE stadium_id NOT IN (SELECT stadium_id FROM concert)",
+      "predicted_sql": "SELECT Name FROM stadium WHERE Stadium_ID NOT IN ( SELECT Stadium_ID FROM concert )",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 3480.8,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "nested_uncorrelated",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 1,
+          "pred_subquery_count": 1,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "30",
+      "db_id": "concert_singer",
+      "question": "Show countries where a singer above age 40 and a singer below 30 are from.",
+      "gold_sql": "SELECT country FROM singer WHERE age  >  40 INTERSECT SELECT country FROM singer WHERE age  <  30",
+      "predicted_sql": "SELECT T1.Country FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID WHERE T1.Age > 40 INTERSECT SELECT T1.Country FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID WHERE T1.Age < 30",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 15457.3,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert",
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "31",
+      "db_id": "concert_singer",
+      "question": "Show names for all stadiums except for stadiums having a concert in year 2014.",
+      "gold_sql": "SELECT name FROM stadium EXCEPT SELECT T2.name FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id WHERE T1.year  =  2014",
+      "predicted_sql": "SELECT DISTINCT T1.Name FROM stadium AS T1 LEFT JOIN concert AS T2 ON T1.Stadium_ID = T2.Stadium_ID WHERE T2.Year != '2014'",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 14108.2,
+      "failure_modes": [
+        "join_hallucination",
+        "self_join"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": [
+            "stadium"
+          ]
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "32",
+      "db_id": "concert_singer",
+      "question": "What are the names of all stadiums that did not have a concert in 2014?",
+      "gold_sql": "SELECT name FROM stadium EXCEPT SELECT T2.name FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id WHERE T1.year  =  2014",
+      "predicted_sql": "SELECT T1.Name FROM stadium AS T1 LEFT JOIN concert AS T2 ON T1.Stadium_ID = T2.Stadium_ID WHERE T2.Year != '2014'",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 9208.8,
+      "failure_modes": [
+        "join_hallucination",
+        "self_join"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": [
+            "stadium"
+          ]
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "33",
+      "db_id": "concert_singer",
+      "question": "Show the name and theme for all concerts and the number of singers in each concert.",
+      "gold_sql": "SELECT T2.concert_name ,  T2.theme ,  count(*) FROM singer_in_concert AS T1 JOIN concert AS T2 ON T1.concert_id  =  T2.concert_id GROUP BY T2.concert_id",
+      "predicted_sql": "SELECT T1.concert_Name, T1.Theme, COUNT(T2.Singer_ID) FROM concert AS T1 INNER JOIN singer_in_concert AS T2 ON T1.concert_ID = T2.concert_ID GROUP BY T1.concert_ID",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 8499.7,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "34",
+      "db_id": "concert_singer",
+      "question": "What are the names , themes , and number of singers for every concert ?",
+      "gold_sql": "select t2.concert_name ,  t2.theme ,  count(*) from singer_in_concert as t1 join concert as t2 on t1.concert_id  =  t2.concert_id group by t2.concert_id",
+      "predicted_sql": "SELECT T1.Name, T2.Theme, COUNT(T3.Singer_ID) FROM stadium AS T1 INNER JOIN concert AS T2 ON T1.Stadium_ID = T2.Stadium_ID INNER JOIN singer_in_concert AS T3 ON T2.concert_ID = T3.concert_ID GROUP BY T1.Name",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 12582.8,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> concert",
+            "t2 -> concert",
+            "t3 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "35",
+      "db_id": "concert_singer",
+      "question": "List singer names and number of concerts for each singer.",
+      "gold_sql": "SELECT T2.name ,  count(*) FROM singer_in_concert AS T1 JOIN singer AS T2 ON T1.singer_id  =  T2.singer_id GROUP BY T2.singer_id",
+      "predicted_sql": "SELECT T1.Name, COUNT(T2.concert_ID) FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID GROUP BY T1.Name",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 8806.6,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "36",
+      "db_id": "concert_singer",
+      "question": "What are the names of the singers and number of concerts for each person?",
+      "gold_sql": "SELECT T2.name ,  count(*) FROM singer_in_concert AS T1 JOIN singer AS T2 ON T1.singer_id  =  T2.singer_id GROUP BY T2.singer_id",
+      "predicted_sql": "SELECT T1.Name, COUNT(T2.concert_ID) FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID GROUP BY T1.Name",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 9338.1,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "37",
+      "db_id": "concert_singer",
+      "question": "List all singer names in concerts in year 2014.",
+      "gold_sql": "SELECT T2.name FROM singer_in_concert AS T1 JOIN singer AS T2 ON T1.singer_id  =  T2.singer_id JOIN concert AS T3 ON T1.concert_id  =  T3.concert_id WHERE T3.year  =  2014",
+      "predicted_sql": "SELECT T1.Name FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID INNER JOIN concert AS T3 ON T2.concert_ID = T3.concert_ID WHERE T3.Year = '2014'",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 13308.5,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert",
+            "t3 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "38",
+      "db_id": "concert_singer",
+      "question": "What are the names of the singers who performed in a concert in 2014?",
+      "gold_sql": "SELECT T2.name FROM singer_in_concert AS T1 JOIN singer AS T2 ON T1.singer_id  =  T2.singer_id JOIN concert AS T3 ON T1.concert_id  =  T3.concert_id WHERE T3.year  =  2014",
+      "predicted_sql": "SELECT T1.Name FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID INNER JOIN concert AS T3 ON T2.concert_ID = T3.concert_ID WHERE T3.Year = '2014'",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 12433.5,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert",
+            "t3 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "39",
+      "db_id": "concert_singer",
+      "question": "what is the name and nation of the singer who have a song having 'Hey' in its name?",
+      "gold_sql": "SELECT name ,  country FROM singer WHERE song_name LIKE '%Hey%'",
+      "predicted_sql": "SELECT T1.Name, T2.Country FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID WHERE T2.concert_ID IN ( SELECT concert_ID FROM concert WHERE Theme = 'Rock' ) AND T1.Song_Name LIKE '%Hey%'",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 13382.1,
+      "failure_modes": [
+        "join_hallucination",
+        "nested_subquery"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 1,
+          "type_mismatch": true
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "40",
+      "db_id": "concert_singer",
+      "question": "What is the name and country of origin of every singer who has a song with the word 'Hey' in its title?",
+      "gold_sql": "SELECT name ,  country FROM singer WHERE song_name LIKE '%Hey%'",
+      "predicted_sql": "SELECT T1.Name, T2.Country FROM singer AS T1 INNER JOIN singer_in_concert AS T2 ON T1.Singer_ID = T2.Singer_ID INNER JOIN concert AS T3 ON T2.concert_ID = T3.concert_ID WHERE T3.Theme LIKE '%Hey%'",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 14321.3,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> singer_in_concert",
+            "t2 -> singer_in_concert",
+            "t3 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "41",
+      "db_id": "concert_singer",
+      "question": "Find the name and location of the stadiums which some concerts happened in the years of both 2014 and 2015.",
+      "gold_sql": "SELECT T2.name ,  T2.location FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id WHERE T1.Year  =  2014 INTERSECT SELECT T2.name ,  T2.location FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id WHERE T1.Year  =  2015",
+      "predicted_sql": "SELECT T1.Name, T2.Location FROM stadium AS T1 INNER JOIN concert AS T2 ON T1.Stadium_ID = T2.Stadium_ID WHERE T2.Year IN ('2014', '2015') GROUP BY T1.Name",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 12365.2,
+      "failure_modes": [
+        "join_hallucination",
+        "self_join"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": [
+            "concert",
+            "stadium"
+          ]
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "42",
+      "db_id": "concert_singer",
+      "question": "What are the names and locations of the stadiums that had concerts that occurred in both 2014 and 2015?",
+      "gold_sql": "SELECT T2.name ,  T2.location FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id WHERE T1.Year  =  2014 INTERSECT SELECT T2.name ,  T2.location FROM concert AS T1 JOIN stadium AS T2 ON T1.stadium_id  =  T2.stadium_id WHERE T1.Year  =  2015",
+      "predicted_sql": "SELECT T1.Name, T2.Location FROM stadium AS T1 INNER JOIN concert AS T2 ON T1.Stadium_ID = T2.Stadium_ID WHERE T2.Year IN ('2014', '2015') GROUP BY T1.Name, T2.Location",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 12101.5,
+      "failure_modes": [
+        "join_hallucination",
+        "self_join"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> concert",
+            "t2 -> concert"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": [
+            "concert",
+            "stadium"
+          ]
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "43",
+      "db_id": "concert_singer",
+      "question": "Find the number of concerts happened in the stadium with the highest capacity .",
+      "gold_sql": "select count(*) from concert where stadium_id = (select stadium_id from stadium order by capacity desc limit 1)",
+      "predicted_sql": "SELECT COUNT(DISTINCT T1.concert_ID) FROM concert AS T1 JOIN stadium AS T2 ON T1.Stadium_ID = T2.Stadium_ID WHERE T2.Capacity = ( SELECT MAX(Capacity) FROM stadium );",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 11090.2,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> stadium",
+            "t2 -> stadium"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "nested_uncorrelated",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 1,
+          "pred_subquery_count": 1,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "44",
+      "db_id": "concert_singer",
+      "question": "What are the number of concerts that occurred in the stadium with the largest capacity ?",
+      "gold_sql": "select count(*) from concert where stadium_id = (select stadium_id from stadium order by capacity desc limit 1)",
+      "predicted_sql": "SELECT COUNT(DISTINCT T1.concert_ID) FROM concert AS T1 JOIN stadium AS T2 ON T1.Stadium_ID = T2.Stadium_ID WHERE T2.Capacity = ( SELECT MAX(Capacity) FROM stadium );",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 9403.1,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> stadium",
+            "t2 -> stadium"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "nested_uncorrelated",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 1,
+          "pred_subquery_count": 1,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "45",
+      "db_id": "pets_1",
+      "question": "Find the number of pets whose weight is heavier than 10.",
+      "gold_sql": "SELECT count(*) FROM pets WHERE weight  >  10",
+      "predicted_sql": "SELECT COUNT(T1.PetID) FROM Pets AS T1 INNER JOIN Has_Pet AS T2 ON T1.PetID = T2.PetID WHERE T1.weight > 10",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 26460.8,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> Has_Pet",
+            "t2 -> Has_Pet"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "46",
+      "db_id": "pets_1",
+      "question": "How many pets have a greater weight than 10?",
+      "gold_sql": "SELECT count(*) FROM pets WHERE weight  >  10",
+      "predicted_sql": "SELECT COUNT(T1.PetID) FROM Pets AS T1 INNER JOIN Has_Pet AS T2 ON T1.PetID = T2.PetID WHERE T1.weight > 10",
+      "exact_match": false,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 9921.5,
+      "failure_modes": [
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> Has_Pet",
+            "t2 -> Has_Pet"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "47",
+      "db_id": "pets_1",
+      "question": "Find the weight of the youngest dog.",
+      "gold_sql": "SELECT weight FROM pets ORDER BY pet_age LIMIT 1",
+      "predicted_sql": "SELECT MIN(T1.weight) FROM Pets AS T1 INNER JOIN Has_Pet AS T2 ON T1.PetID = T2.PetID WHERE T1.pet_type = 'dog'",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 8684.1,
+      "failure_modes": [
+        "schema_linking",
+        "join_hallucination"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": [
+            "pet_type"
+          ]
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> Has_Pet",
+            "t2 -> Has_Pet"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "48",
+      "db_id": "pets_1",
+      "question": "How much does the youngest dog weigh?",
+      "gold_sql": "SELECT weight FROM pets ORDER BY pet_age LIMIT 1",
+      "predicted_sql": "SELECT SUM(T1.weight) FROM Pets AS T1 INNER JOIN Has_Pet AS T2 ON T1.PetID = T2.PetID WHERE T1.pet_type = 'dog' AND T1.pet_age = ( SELECT MIN(pet_age) FROM Pets WHERE pet_type = 'dog' )",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 14152.2,
+      "failure_modes": [
+        "schema_linking",
+        "join_hallucination",
+        "nested_subquery"
+      ],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": [
+            "pet_type",
+            "pet_type"
+          ]
+        },
+        "join_hallucination": {
+          "hallucinated_joins": [
+            "t1 -> Has_Pet",
+            "t2 -> Has_Pet"
+          ]
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "nested_uncorrelated",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 1,
+          "type_mismatch": true
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    },
+    {
+      "example_id": "49",
+      "db_id": "pets_1",
+      "question": "Find the maximum weight for each type of pet. List the maximum weight and pet type.",
+      "gold_sql": "SELECT max(weight) ,  petType FROM pets GROUP BY petType",
+      "predicted_sql": "SELECT MAX(weight), PetType FROM Pets GROUP BY PetType",
+      "exact_match": true,
+      "execution_accuracy": true,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 3972.7,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": null,
+      "completeness": null,
+      "error_traceability": null,
+      "lrg_summary": null
+    }
+  ]
+}

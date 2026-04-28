@@ -1,0 +1,500 @@
+{
+  "run_id": "905a952b",
+  "timestamp": "2026-04-26T02:25:36.671939",
+  "model": "lrg_ollama/llama3.2:3b",
+  "dataset": "cosql",
+  "n_examples": 10,
+  "exact_match": 0.0,
+  "execution_accuracy": 0.0,
+  "component_scores": {
+    "limit": 0.8,
+    "where": 0.4,
+    "from": 0.4,
+    "join": 0.5,
+    "having": 0.5,
+    "select": 0.1,
+    "order by": 0.9,
+    "group by": 0.4
+  },
+  "failure_summary": {
+    "total": 10,
+    "correct": 0,
+    "schema_linking": 0,
+    "schema_linking_rate": 0.0,
+    "join_hallucination": 0,
+    "join_hallucination_rate": 0.0,
+    "nested_subquery": 0,
+    "nested_subquery_rate": 0.0,
+    "self_join": 0,
+    "self_join_rate": 0.0,
+    "context_drift": 0,
+    "context_drift_rate": 0.0
+  },
+  "explainability_summary": {
+    "mean_faithfulness": 1.0,
+    "mean_completeness": 0.7917,
+    "error_traceability_rate": 0.0,
+    "n_examples": 10
+  },
+  "elapsed_seconds": 1026.48,
+  "per_example": [
+    {
+      "example_id": "0_0",
+      "db_id": "car_1",
+      "question": "How many car models are produced by each maker? List the count and the maker full name.",
+      "gold_sql": "SELECT Count ( * )  ,  T2.FullName  FROM MODEL_LIST AS T1 JOIN CAR_MAKERS AS T2 ON T1.Maker   =   T2.Id GROUP BY T2.id",
+      "predicted_sql": "SELECT COUNT(*), car_makers.Maker, model_list.Model\nFROM car_makers\nGROUP BY car_makers.Maker",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 109256.9,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 6 nodes, 4 edges\n  entity: 2\n  attribute: 2\n  aggregation: 1\n  grouping: 1"
+    },
+    {
+      "example_id": "0_1",
+      "db_id": "car_1",
+      "question": "Which models are the most popular?",
+      "gold_sql": "SELECT T1.model FROM MODEL_LIST AS T1 JOIN CAR_MAKERS AS T2 ON T1.Maker   =   T2.Id GROUP BY T2.id order by count ( * )  desc limit 1",
+      "predicted_sql": "SELECT COUNT(*), model_list.Model, car_makers.FullName\nFROM model_list\nGROUP BY car_makers.Id",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": true,
+        "group by": false,
+        "having": true,
+        "order by": false,
+        "limit": false
+      },
+      "elapsed_ms": 100464.0,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        },
+        "context_drift": {
+          "drifted_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.5,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 6 nodes, 4 edges\n  entity: 2\n  attribute: 2\n  aggregation: 1\n  grouping: 1"
+    },
+    {
+      "example_id": "0_2",
+      "db_id": "car_1",
+      "question": "Which companies have three or more models?",
+      "gold_sql": "SELECT Count ( * )  ,  T2.FullName ,  T2.id FROM MODEL_LIST AS T1 JOIN CAR_MAKERS AS T2 ON T1.Maker   =   T2.Id GROUP BY T2.id having count ( * )   > =  3",
+      "predicted_sql": "SELECT COUNT(*), COUNT(*), model_list.Model, car_makers.FullName\nFROM car_makers\nWHERE model_list.Maker = ''\nGROUP BY car_makers.Id\nHAVING car_makers.CountryName IN (/* subquery */)\nLIMIT 3",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": false,
+        "having": false,
+        "order by": true,
+        "limit": false
+      },
+      "elapsed_ms": 121205.7,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        },
+        "context_drift": {
+          "drifted_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 9 nodes, 8 edges\n  entity: 2\n  attribute: 2\n  aggregation: 2\n  filter: 2\n  grouping: 1"
+    },
+    {
+      "example_id": "1_0",
+      "db_id": "concert_singer",
+      "question": "please list the singers | did you mean list their names? | yes",
+      "gold_sql": "SELECT name FROM singer",
+      "predicted_sql": "SELECT Name\nFROM singer\nHAVING Is_male = False",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": true,
+        "from": true,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": false,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 103656.3,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 3 nodes, 2 edges\n  entity: 1\n  attribute: 1\n  filter: 1"
+    },
+    {
+      "example_id": "1_1",
+      "db_id": "concert_singer",
+      "question": "can you also  give number of concerts for each singer",
+      "gold_sql": "SELECT T2.name ,  count ( * )  FROM singer_in_concert AS T1 JOIN singer AS T2 ON T1.singer_id   =   T2.singer_id GROUP BY T2.singer_id",
+      "predicted_sql": "SELECT DISTINCT COUNT(*), singer.Name, *\nFROM singer\nWHERE singer_in_concert.Singer_ID = ''\nGROUP BY singer_in_concert.concert_ID",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": false,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 98136.0,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        },
+        "context_drift": {
+          "drifted_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 7 nodes, 3 edges\n  entity: 2\n  attribute: 2\n  aggregation: 1\n  filter: 1\n  grouping: 1"
+    },
+    {
+      "example_id": "2_0",
+      "db_id": "cre_Doc_Template_Mgt",
+      "question": "Hi!  Can you tell me how many unique template IDs there are?",
+      "gold_sql": "SELECT count ( distinct template_id )  FROM Documents",
+      "predicted_sql": "SELECT COUNT(Template_ID), Template_ID\nFROM Templates",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": true,
+        "where": true,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 79515.5,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 1.0,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 3 nodes, 2 edges\n  entity: 1\n  attribute: 1\n  aggregation: 1"
+    },
+    {
+      "example_id": "2_1",
+      "db_id": "cre_Doc_Template_Mgt",
+      "question": "How many of those 12 template IDs are used by more than one document?",
+      "gold_sql": "SELECT count ( template_id )  FROM Documents GROUP BY template_id HAVING count ( * )   >  1",
+      "predicted_sql": "SELECT DISTINCT COUNT(*), Template_ID\nFROM Documents\nWHERE Template_ID = '12'",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": false,
+        "having": false,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 79981.4,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        },
+        "context_drift": {
+          "drifted_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.75,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 4 nodes, 3 edges\n  entity: 1\n  attribute: 1\n  aggregation: 1\n  filter: 1"
+    },
+    {
+      "example_id": "2_2",
+      "db_id": "cre_Doc_Template_Mgt",
+      "question": "Great!  Can you show me the corresponding document that used each of those template IDs on the list you just provided me?",
+      "gold_sql": "SELECT document_id FROM Documents GROUP BY template_id HAVING count ( * )   >  1",
+      "predicted_sql": "SELECT Documents.Document_Name, Templates.Template_Details\nFROM Documents\nWHERE Documents.Template_ID = ''\nHAVING Templates.Template_Type_Code = ''",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": false,
+        "having": false,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 96321.7,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        },
+        "context_drift": {
+          "drifted_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.6667,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 6 nodes, 4 edges\n  entity: 2\n  attribute: 2\n  filter: 2"
+    },
+    {
+      "example_id": "3_0",
+      "db_id": "student_transcripts_tracking",
+      "question": "Find the first name of the students who permanently live in the country Haiti.",
+      "gold_sql": "SELECT T1.first_name FROM Students AS T1 JOIN Addresses AS T2 ON T1.permanent_address_id   =   T2.address_id WHERE T2.country   =   'Haiti'",
+      "predicted_sql": "SELECT first_name\nFROM Students\nWHERE country = 'Haiti'",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": false,
+        "join": false,
+        "where": false,
+        "group by": true,
+        "having": true,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 119597.5,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.3333,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 3 nodes, 2 edges\n  entity: 1\n  attribute: 1\n  filter: 1"
+    },
+    {
+      "example_id": "3_1",
+      "db_id": "student_transcripts_tracking",
+      "question": "Please also find the first name of the students who have the cell phone number 09700166582",
+      "gold_sql": "SELECT first_name FROM Students WHERE cell_mobile_number  =  '09700166582'",
+      "predicted_sql": "SELECT Students.first_name, Addresses.city\nFROM Students\nWHERE Students.cell_mobile_number = '09700166582'\nHAVING Addresses.country = 'Haiti'",
+      "exact_match": false,
+      "execution_accuracy": false,
+      "component_scores": {
+        "select": false,
+        "from": true,
+        "join": true,
+        "where": false,
+        "group by": true,
+        "having": false,
+        "order by": true,
+        "limit": true
+      },
+      "elapsed_ms": 118310.0,
+      "failure_modes": [],
+      "failure_details": {
+        "schema_linking": {
+          "bad_tables": [],
+          "bad_cols": []
+        },
+        "join_hallucination": {
+          "hallucinated_joins": []
+        },
+        "nested_subquery": {
+          "gold_type": "unnested",
+          "pred_type": "unnested",
+          "gold_subquery_count": 0,
+          "pred_subquery_count": 0,
+          "type_mismatch": false
+        },
+        "self_join": {
+          "missing_self_join_tables": []
+        },
+        "context_drift": {
+          "drifted_tables": []
+        }
+      },
+      "faithfulness": 1.0,
+      "completeness": 0.6667,
+      "error_traceability": false,
+      "lrg_summary": "LRGGraph: 6 nodes, 4 edges\n  entity: 2\n  attribute: 2\n  filter: 2"
+    }
+  ]
+}
